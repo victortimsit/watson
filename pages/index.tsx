@@ -18,7 +18,6 @@ export default function Home() {
   const syntesis = useRef<any>(null);
 
   const [talking, setTalking] = useState(false);
-  // const started = useRef(false);
   const [started, setStarted] = useState(false);
   const [messages, setMessages] = useState<
     Array<{ speaker: string; message: string }>
@@ -56,12 +55,6 @@ export default function Home() {
     setTalking(true);
     const utterThis = new SpeechSynthesisUtterance(message);
     syntesis.current = SpeechSynthesis.current;
-
-    const voices = syntesis.current
-      .getVoices()
-      .filter((l: any) => l.lang.includes("en"));
-    console.log("VOICES ", voices);
-    // utterThis.voice = voices[0];
     syntesis.current.speak(utterThis);
 
     utterThis.onend = () => {
@@ -108,6 +101,10 @@ export default function Home() {
 
   const getGPT3Answer = async (message: string) => {
     console.log("HISTORY ", conversationHistory);
+    const prompt = `The following is a conversation with an AI assistant that help to practice English. The assistant uses open questions and keep the conversation going. The assistant don't talks about the same subject more than twice. \n\n${conversationHistory.current.join(
+      "\n"
+    )}Human:${message}\nAI:`;
+    console.log(prompt);
 
     return await fetch("https://api.openai.com/v1/completions", {
       method: "POST",
@@ -117,9 +114,7 @@ export default function Home() {
       },
       body: JSON.stringify({
         model: "text-davinci-002",
-        prompt: `The following is a conversation with an AI assistant that help to practice English. The assistant uses open questions and keep the conversation going. The assistant don't talks about the same subject more than twice. \n${conversationHistory.current.join(
-          "\n"
-        )}\nHuman:${message}\n\nAI:`,
+        prompt,
         temperature: 1,
         max_tokens: 100,
         presence_penalty: 2,
