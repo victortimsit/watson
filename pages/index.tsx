@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import StartButton from "./components/StartButton";
 
 const initialMessage = { speaker: "UI", message: "Play to start talking" };
-const wakingUpMessage = "Ask me a question to start the conversation";
+const wakingUpMessage = "Ask the question of your choice";
 const initialConversationHistory = [
   "Human: Hello, who are you?",
   "AI: I am Watson. How can I help you today?",
@@ -27,9 +27,6 @@ export default function Home() {
   const startSpeechToText = () => {
     console.log("Start");
     setStarted(true);
-
-    recognition.current = new SpeechRecognition.current();
-    speechRecognitionList.current = new SpeechGrammarList.current();
 
     recognition.current.start();
 
@@ -66,7 +63,6 @@ export default function Home() {
 
   const stopTextToSpeech = () => {
     setTalking(false);
-    if (syntesis.current) syntesis.current.cancel();
   };
 
   const start = () => {
@@ -74,20 +70,22 @@ export default function Home() {
   };
 
   const restart = () => {
-    console.log("restart");
-    stopSpeechToText();
-    stopTextToSpeech();
+    window.location.reload();
+    // conversationHistory.current = initialConversationHistory;
 
-    conversationHistory.current = initialConversationHistory;
-    setMessages([initialMessage]);
-    setStarted(false);
+    // stopSpeechToText();
+    // stopTextToSpeech();
+
+    // console.log(conversationHistory.current);
+    // setMessages([initialMessage]);
+    // setStarted(false);
   };
 
   const handleAnswer = async (message: string) => {
     const humanMessage = `Human: ${message}`;
     setMessages((m) => [...m, { speaker: "Human", message }]);
     const res = await getGPT3Answer(message);
-    const answer: string = res.choices[0].text;
+    const answer: string = res.choices[0].text.replaceAll("\n", "").trim();
     // const answer = "Hello my friend! How can I help you?";
     const AIAnswer = `AI: ${answer}`;
     if (conversationHistory.current.length > 8)
@@ -100,12 +98,11 @@ export default function Home() {
   };
 
   const getGPT3Answer = async (message: string) => {
-    console.log("HISTORY ", conversationHistory);
     // @ts-ignore
     window.splitbee.track("gpt3-anwser");
     const prompt = `The following is a conversation with an AI assistant that help to practice English. The assistant uses open questions and keep the conversation going. The assistant don't talks about the same subject more than twice. \n\n${conversationHistory.current.join(
       "\n"
-    )}Human:${message}\nAI:`;
+    )}\nHuman: ${message}\nAI:`;
     console.log(prompt);
 
     return await fetch("https://api.openai.com/v1/completions", {
@@ -137,6 +134,9 @@ export default function Home() {
       window.SpeechRecognitionEvent || webkitSpeechRecognitionEvent;
     //@ts-ignore
     SpeechSynthesis.current = window.speechSynthesis;
+
+    recognition.current = new SpeechRecognition.current();
+    speechRecognitionList.current = new SpeechGrammarList.current();
   };
   useEffect(() => {
     initState();
