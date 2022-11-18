@@ -1,8 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 import StartButton from "./components/StartButton";
 
-const OPEN_AI_TOKEN = "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";
-const initialMessage = { speaker: "Human", message: "Play to start talking" };
+const initialMessage = { speaker: "UI", message: "Play to start talking" };
+const wakingUpMessage = "Ask me a question to start the conversation";
 const initialConversationHistory = [
   "Human: Hello, who are you?",
   "AI: I am Watson. How can I help you today?",
@@ -24,7 +24,6 @@ export default function Home() {
     Array<{ speaker: string; message: string }>
   >([initialMessage]);
   const conversationHistory = useRef<Array<string>>(initialConversationHistory);
-  const [result, setResult] = useState("");
 
   const startSpeechToText = () => {
     console.log("Start");
@@ -39,7 +38,6 @@ export default function Home() {
       const text = event.results[0][0].transcript;
       console.log(text);
 
-      setResult(text);
       handleAnswer(text);
     };
     recognition.current.onspeechstart = () => {
@@ -59,6 +57,11 @@ export default function Home() {
     const utterThis = new SpeechSynthesisUtterance(message);
     syntesis.current = SpeechSynthesis.current;
 
+    const voices = syntesis.current
+      .getVoices()
+      .filter((l: any) => l.lang.includes("en"));
+    console.log("VOICES ", voices);
+    // utterThis.voice = voices[0];
     syntesis.current.speak(utterThis);
 
     utterThis.onend = () => {
@@ -74,7 +77,7 @@ export default function Home() {
   };
 
   const start = () => {
-    handleAnswer("Ask me a question to start the conversation");
+    handleAnswer(wakingUpMessage);
   };
 
   const restart = () => {
@@ -92,7 +95,7 @@ export default function Home() {
     setMessages((m) => [...m, { speaker: "Human", message }]);
     const res = await getGPT3Answer(message);
     const answer: string = res.choices[0].text;
-    // const answer = "Hello";
+    // const answer = "Hello my friend! How can I help you?";
     const AIAnswer = `AI: ${answer}`;
     if (conversationHistory.current.length > 8)
       conversationHistory.current.splice(0, 2);
@@ -110,7 +113,7 @@ export default function Home() {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${OPEN_AI_TOKEN}`,
+        Authorization: `Bearer ${process.env.NEXT_PUBLIC_OPEN_AI_TOKEN}`,
       },
       body: JSON.stringify({
         model: "text-davinci-002",
@@ -140,10 +143,6 @@ export default function Home() {
   };
   useEffect(() => {
     initState();
-    // startSpeechToText();
-    // window.addEventListener("click", startSpeechToText);
-
-    // return () => window.removeEventListener("click", startSpeechToText);
   }, []);
 
   return (
@@ -183,7 +182,9 @@ export default function Home() {
               : ""
           }`}
         >
-          {messages[messages.length - 1].message}
+          {messages[messages.length - 1].message == wakingUpMessage
+            ? "Waking up Watson..."
+            : messages[messages.length - 1].message}
         </span>
         <StartButton
           className="mt-8"
