@@ -101,6 +101,8 @@ export default function Home() {
 
   const getGPT3Answer = async (message: string) => {
     console.log("HISTORY ", conversationHistory);
+    // @ts-ignore
+    window.splitbee.track("gpt3-anwser");
     const prompt = `The following is a conversation with an AI assistant that help to practice English. The assistant uses open questions and keep the conversation going. The assistant don't talks about the same subject more than twice. \n\n${conversationHistory.current.join(
       "\n"
     )}Human:${message}\nAI:`;

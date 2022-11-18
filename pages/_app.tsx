@@ -12,6 +12,7 @@ export default function App({ Component, pageProps }: AppProps) {
           content="Improve your English speaking skills by talking to Watson"
         />
         <link rel="icon" href="/favicon.ico" />
+        <script async src="https://cdn.splitbee.io/sb.js" />
       </Head>
       <Component {...pageProps} />
     </>
