@@ -10,7 +10,7 @@ const initialConversationHistory = [
 
 export default function Home() {
   const SpeechRecognition = useRef<any>(null);
-  const SpeechGrammarList = useRef<any>(null);
+  // const SpeechGrammarList = useRef<any>(null);
   const SpeechRecognitionEvent = useRef<any>(null);
   const SpeechSynthesis = useRef<any>(null);
   const recognition = useRef<any>(null);
@@ -126,9 +126,9 @@ export default function Home() {
     SpeechRecognition.current =
       //@ts-ignore
       window.SpeechRecognition || webkitSpeechRecognition;
-    SpeechGrammarList.current =
-      //@ts-ignore
-      window.SpeechGrammarList || webkitSpeechGrammarList;
+    // SpeechGrammarList.current =
+    //   //@ts-ignore
+    //   window.SpeechGrammarList || webkitSpeechGrammarList;
     SpeechRecognitionEvent.current =
       //@ts-ignore
       window.SpeechRecognitionEvent || webkitSpeechRecognitionEvent;
@@ -136,7 +136,7 @@ export default function Home() {
     SpeechSynthesis.current = window.speechSynthesis;
 
     recognition.current = new SpeechRecognition.current();
-    speechRecognitionList.current = new SpeechGrammarList.current();
+    // speechRecognitionList.current = new SpeechGrammarList.current();
   };
   useEffect(() => {
     initState();
