@@ -62,6 +62,7 @@ const DynamicHead = (props: DynamicHeadProps) => {
       <meta name="twitter:image" content={props.image_url} key="tw-image" />
       {/* <!-- Splitbee --> */}
       <script async src="https://cdn.splitbee.io/sb.js" />
+      <script src="https://unpkg.com/@grammarly/editor-sdk?clientId=client_ArvMjTYZjeXHHuZdMhZHt1"></script>
     </Head>
   );
 };
