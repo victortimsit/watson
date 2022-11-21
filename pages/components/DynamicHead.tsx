@@ -71,11 +71,8 @@ export const DynamicHead = (props: DynamicHeadProps) => {
         key="tw-description"
       />
       <meta name="twitter:image" content={props.image_url} key="tw-image" />
-      <script src="https://c.dynamite.run/d.js?sid=qAX2Ncp" async></script>
-      <link
-        rel="stylesheet"
-        href="data:text/css;base64,Ym9keXthbmltYXRpb246ZiAwcyAxcyBiYWNrd2FyZHN9QGtleWZyYW1lcyBme2Zyb217b3BhY2l0eTowfXRve29wYWNpdHk6MX19"
-      />
+      {/* <!-- Splitbee --> */}
+      <script async src="https://cdn.splitbee.io/sb.js" />
     </Head>
   );
 };
