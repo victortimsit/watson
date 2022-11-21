@@ -8,7 +8,7 @@ type DynamicHeadProps = {
   favicon_url?: string;
 };
 
-export const DynamicHead = (props: DynamicHeadProps) => {
+const DynamicHead = (props: DynamicHeadProps) => {
   const { asPath } = useRouter();
 
   return (
@@ -72,3 +72,5 @@ DynamicHead.defaultProps = {
   image_url: `${process.env.NEXT_PUBLIC_WEB_URL}/og.png`,
   favicon_url: `${process.env.NEXT_PUBLIC_WEB_URL}/favicon.ico`,
 };
+
+export default DynamicHead;
