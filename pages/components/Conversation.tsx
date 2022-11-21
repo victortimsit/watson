@@ -11,9 +11,13 @@ const Conversation = (props: ConversationProps) => {
     <div
       className={`${props.className} font-space flex flex-col items-start gap-4 p-4 bg-white/5 rounded-xl border border-white/5`}
     >
-      {props.history.map((message: MessageInterface) => (
-        <Message key={message.message} message={message} />
-      ))}
+      {props.history ? (
+        props.history.map((message: MessageInterface) => (
+          <Message key={message.message} message={message} />
+        ))
+      ) : (
+        <div>Conversation will appear here</div>
+      )}
     </div>
   );
 };

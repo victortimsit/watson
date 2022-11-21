@@ -7,6 +7,7 @@ interface MessageProps {
 }
 
 const Message = (props: MessageProps) => {
+  if (props.message == undefined) return <></>;
   const classes =
     props.message.speaker == "AI"
       ? "bg-white/30 rounded-bl-sm"

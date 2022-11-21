@@ -24,9 +24,9 @@ export default function Home() {
   const [started, setStarted] = useState(false);
   const [suggestions, setSuggestions] = useState([]);
   const [messages, setMessages] = useState<
-    Array<{ speaker: string; message: string }>
+    { speaker: string; message: string }[]
   >([initialMessage]);
-  const conversationHistory = useRef<Array<MessageInterface>>(
+  const conversationHistory = useRef<MessageInterface[]>(
     initialConversationHistory
   );
 
@@ -242,7 +242,7 @@ export default function Home() {
           onRestart={restart}
         />
       </main>
-      <div className="absolute top-0 w-full p-4 flex justify-between items-start gap-4 flex-col md:flex-row">
+      <div className="absolute top-0 w-full p-4 flex justify-between items-stretch md:items-start gap-4 flex-col md:flex-row">
         <Conversation
           className="md:w-96 overflow-y-scroll"
           history={conversationHistory.current}
