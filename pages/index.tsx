@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import StartButton from "./components/StartButton";
 
 const initialMessage = { speaker: "UI", message: "Play to start talking" };
-const wakingUpMessage = "Ask the question of your choice";
+const wakingUpMessage = "Start the conversation by asking me a question!";
 const initialConversationHistory = [
   "Human: Hello, who are you?",
   "AI: I am Watson. How can I help you today?",
@@ -34,17 +34,19 @@ export default function Home() {
       const text = event.results[0][0].transcript;
       console.log(text);
 
+      stopSpeechToText();
       handleAnswer(text);
     };
     recognition.current.onspeechstart = () => {
       setTalking(true);
     };
 
-    recognition.current.onspeechend = stopSpeechToText;
+    // recognition.current.onspeechend = stopSpeechToText;
   };
 
   const stopSpeechToText = () => {
     setTalking(false);
+    console.log("Stop");
     recognition.current.stop();
   };
 
@@ -100,7 +102,7 @@ export default function Home() {
   const getGPT3Answer = async (message: string) => {
     // @ts-ignore
     window.splitbee.track("gpt3-anwser");
-    const prompt = `The following is a conversation with an AI assistant that help to practice English. The assistant uses open questions and keep the conversation going. The assistant don't talks about the same subject more than twice. \n\n${conversationHistory.current.join(
+    const prompt = `The following is a conversation with an AI assistant that help to practice English. The assistant often changes the topic of conversation.\n\n${conversationHistory.current.join(
       "\n"
     )}\nHuman: ${message}\nAI:`;
     console.log(prompt);
