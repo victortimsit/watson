@@ -34,14 +34,18 @@ export default function Home() {
       const text = event.results[0][0].transcript;
       console.log(text);
 
-      stopSpeechToText();
+      recognition.current.stop();
       handleAnswer(text);
     };
     recognition.current.onspeechstart = () => {
+      console.log("start");
       setTalking(true);
     };
 
-    // recognition.current.onspeechend = stopSpeechToText;
+    recognition.current.onspeechend = () => {
+      console.log("end");
+      setTalking(false);
+    };
   };
 
   const stopSpeechToText = () => {
