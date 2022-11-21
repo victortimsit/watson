@@ -24,9 +24,9 @@ export default function Home() {
   const [started, setStarted] = useState(false);
   const [suggestions, setSuggestions] = useState([]);
   const [messages, setMessages] = useState<
-    Array<{ speaker: string; message: string }>
+    { speaker: string; message: string }[]
   >([initialMessage]);
-  const conversationHistory = useRef<Array<MessageInterface>>(
+  const conversationHistory = useRef<MessageInterface[]>(
     initialConversationHistory
   );
 
