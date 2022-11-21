@@ -1,11 +1,13 @@
 import { useEffect, useRef, useState } from "react";
+import { MessageInterface } from "../types/Conversation";
+import Conversation from "./components/Conversation";
 import StartButton from "./components/StartButton";
 
 const initialMessage = { speaker: "UI", message: "Play to start talking" };
 const wakingUpMessage = "Ask the question of your choice";
 const initialConversationHistory = [
-  "Human: Hello, who are you?",
-  "AI: I am Watson. How can I help you today?",
+  { speaker: "Human", message: "Hello, who are you?" },
+  { speaker: "AI", message: "I am Watson. How can I help you today?" },
 ];
 
 export default function Home() {
@@ -22,7 +24,9 @@ export default function Home() {
   const [messages, setMessages] = useState<
     Array<{ speaker: string; message: string }>
   >([initialMessage]);
-  const conversationHistory = useRef<Array<string>>(initialConversationHistory);
+  const conversationHistory = useRef<Array<MessageInterface>>(
+    initialConversationHistory
+  );
 
   const startSpeechToText = () => {
     console.log("Start");
@@ -90,7 +94,10 @@ export default function Home() {
     const AIAnswer = `AI: ${answer}`;
     if (conversationHistory.current.length > 8)
       conversationHistory.current.splice(0, 2);
-    conversationHistory.current.push(humanMessage, AIAnswer);
+    conversationHistory.current.push(
+      { speaker: "Human", message },
+      { speaker: "AI", message: answer }
+    );
 
     setMessages((m) => [...m, { speaker: "AI", message: answer }]);
 
@@ -100,9 +107,9 @@ export default function Home() {
   const getGPT3Answer = async (message: string) => {
     // @ts-ignore
     window.splitbee.track("gpt3-anwser");
-    const prompt = `The following is a conversation with an AI assistant that help to practice English. The assistant uses open questions and keep the conversation going. The assistant don't talks about the same subject more than twice. \n\n${conversationHistory.current.join(
-      "\n"
-    )}\nHuman: ${message}\nAI:`;
+    const prompt = `The following is a conversation with an AI assistant that help to practice English. The assistant often changes the topic of conversation.\n\n${conversationHistory.current
+      .map((message) => `${message.speaker}: ${message.message}`)
+      .join("\n")}\nHuman: ${message}\nAI:`;
     console.log(prompt);
 
     return await fetch("https://api.openai.com/v1/completions", {
@@ -190,6 +197,10 @@ export default function Home() {
           onRestart={restart}
         />
       </main>
+      <Conversation
+        className="absolute left-0 top-0 m-4 w-96 overflow-y-scroll"
+        history={conversationHistory.current}
+      />
     </div>
   );
 }
