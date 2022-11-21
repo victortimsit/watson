@@ -3,7 +3,7 @@ import Message from "./Message";
 
 interface ConversationProps {
   className?: string;
-  history: Array<MessageInterface>;
+  history: MessageInterface[];
 }
 
 const Conversation = (props: ConversationProps) => {
@@ -12,7 +12,7 @@ const Conversation = (props: ConversationProps) => {
       className={`${props.className} font-space flex flex-col items-start gap-4 p-4 bg-white/5 rounded-xl border border-white/5`}
     >
       {props.history.map((message: MessageInterface) => (
-        <Message message={message} />
+        <Message key={message.message} message={message} />
       ))}
     </div>
   );
