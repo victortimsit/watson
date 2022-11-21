@@ -28,6 +28,7 @@ const Message = (props: MessageProps) => {
     >
       <div
         contentEditable
+        suppressContentEditableWarning
         className={`${props.className} ${classes} px-3 py-2 rounded-lg`}
       >
         <span>{props.message.message}</span>

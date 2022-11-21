@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { MessageInterface } from "../types/Conversation";
 import Conversation from "./components/Conversation";
 import StartButton from "./components/StartButton";
+import Suggestions from "./components/Suggestions";
 
 const initialMessage = { speaker: "UI", message: "Play to start talking" };
 const wakingUpMessage = "Ask the question of your choice";
@@ -21,6 +22,7 @@ export default function Home() {
 
   const [talking, setTalking] = useState(false);
   const [started, setStarted] = useState(false);
+  const [suggestions, setSuggestions] = useState([]);
   const [messages, setMessages] = useState<
     Array<{ speaker: string; message: string }>
   >([initialMessage]);
@@ -85,11 +87,15 @@ export default function Home() {
     // setStarted(false);
   };
 
+  const cleanGPT3Response = (res: any) =>
+    res.choices[0].text.replaceAll("\n", "").trim();
+
   const handleAnswer = async (message: string) => {
     const humanMessage = `Human: ${message}`;
     setMessages((m) => [...m, { speaker: "Human", message }]);
     const res = await getGPT3Answer(message);
-    const answer: string = res.choices[0].text.replaceAll("\n", "").trim();
+    const answer: string = cleanGPT3Response(res);
+
     // const answer = "Hello my friend! How can I help you?";
     const AIAnswer = `AI: ${answer}`;
     if (conversationHistory.current.length > 8)
@@ -102,6 +108,18 @@ export default function Home() {
     setMessages((m) => [...m, { speaker: "AI", message: answer }]);
 
     startTextToSpeech(answer);
+    try {
+      let _suggestions = await getGPT3Suggestions(answer);
+      console.log("SUGGESTION ", _suggestions);
+      _suggestions = cleanGPT3Response(_suggestions);
+
+      console.log("ARRAY ", _suggestions);
+
+      setSuggestions(JSON.parse(_suggestions));
+    } catch (error) {
+      console.log(error);
+      setSuggestions([]);
+    }
   };
 
   const getGPT3Answer = async (message: string) => {
@@ -125,6 +143,27 @@ export default function Home() {
         max_tokens: 100,
         presence_penalty: 2,
         frequency_penalty: 2,
+      }),
+    }).then((r) => r.json());
+  };
+
+  const getGPT3Suggestions = async (message: string) => {
+    const prompt = `Suggest some answers in plain English to this message: "${message}".\nReturn a Javascript array with double quotes.\n\n
+    Example: ["Answer 1", "Answer 2", "Answer 3"]\n\nJavascript array:`;
+
+    return await fetch("https://api.openai.com/v1/completions", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${process.env.NEXT_PUBLIC_OPEN_AI_TOKEN}`,
+      },
+      body: JSON.stringify({
+        model: "text-davinci-002",
+        prompt,
+        temperature: 0.7,
+        max_tokens: 100,
+        presence_penalty: 0,
+        frequency_penalty: 0,
       }),
     }).then((r) => r.json());
   };
@@ -200,6 +239,10 @@ export default function Home() {
       <Conversation
         className="absolute left-0 top-0 m-4 w-96 overflow-y-scroll"
         history={conversationHistory.current}
+      />
+      <Suggestions
+        className="absolute right-0 top-0 m-4 w-96 overflow-y-scroll"
+        suggestions={suggestions}
       />
     </div>
   );
