@@ -23,6 +23,7 @@ export default function Home() {
   const [talking, setTalking] = useState(false);
   const [started, setStarted] = useState(false);
   const [suggestions, setSuggestions] = useState([]);
+  const [isChrome, setIsChrome] = useState<boolean | null>(null);
   const [messages, setMessages] = useState<
     { speaker: string; message: string }[]
   >([initialMessage]);
@@ -182,6 +183,7 @@ export default function Home() {
   };
 
   const initState = () => {
+    setIsChrome(navigator.userAgent.includes("Chrome"));
     SpeechRecognition.current =
       //@ts-ignore
       window.SpeechRecognition || webkitSpeechRecognition;
@@ -201,6 +203,13 @@ export default function Home() {
   useEffect(() => {
     initState();
   }, []);
+
+  if (!isChrome)
+    return (
+      <div className="flex items-center justify-center h-screen px-4 font-space text-center">
+        For now, Watson only works on Google Chrome for desktop.
+      </div>
+    );
 
   return (
     <div>
