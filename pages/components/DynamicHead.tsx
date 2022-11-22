@@ -1,5 +1,6 @@
 import Head from "next/head";
 import { useRouter } from "next/router";
+import Script from "next/script";
 
 type DynamicHeadProps = {
   title?: string;
@@ -62,7 +63,7 @@ const DynamicHead = (props: DynamicHeadProps) => {
       <meta name="twitter:image" content={props.image_url} key="tw-image" />
       {/* <!-- Splitbee --> */}
       <script async src="https://cdn.splitbee.io/sb.js" />
-      <script
+      <Script
         async
         src="https://unpkg.com/@grammarly/editor-sdk?clientId=client_ArvMjTYZjeXHHuZdMhZHt1"
       />

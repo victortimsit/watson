@@ -31,6 +31,7 @@ export default function Home() {
   );
 
   const startSpeechToText = () => {
+    let result: string;
     console.log("Start");
     setStarted(true);
 
@@ -38,9 +39,9 @@ export default function Home() {
 
     recognition.current.onresult = (event: any) => {
       const text = event.results[0][0].transcript;
-      console.log(text);
-
+      result = text;
       recognition.current.stop();
+
       handleAnswer(text);
     };
     recognition.current.onspeechstart = () => {
@@ -48,9 +49,15 @@ export default function Home() {
       setTalking(true);
     };
 
-    recognition.current.onspeechend = () => {
-      console.log("end");
+    recognition.current.onspeechend = async () => {
+      recognition.current.stop();
+      console.log("speech end");
       setTalking(false);
+    };
+
+    recognition.current.onend = async () => {
+      console.log("end");
+      if (!result) recognition.current.start();
     };
   };
 
@@ -187,8 +194,9 @@ export default function Home() {
     //@ts-ignore
     SpeechSynthesis.current = window.speechSynthesis;
 
-    recognition.current = new SpeechRecognition.current();
     // speechRecognitionList.current = new SpeechGrammarList.current();
+    recognition.current = new SpeechRecognition.current();
+    console.log("SET recognition.current ");
   };
   useEffect(() => {
     initState();
