@@ -183,7 +183,10 @@ export default function Home() {
   };
 
   const initState = () => {
-    setIsChrome(navigator.userAgent.includes("Chrome"));
+    const isChrome = navigator.userAgent.includes("Chrome");
+    setIsChrome(isChrome);
+    if (!isChrome) return;
+
     SpeechRecognition.current =
       //@ts-ignore
       window.SpeechRecognition || webkitSpeechRecognition;
