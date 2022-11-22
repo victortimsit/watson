@@ -5,7 +5,7 @@ import StartButton from "./components/StartButton";
 import Suggestions from "./components/Suggestions";
 
 const initialMessage = { speaker: "UI", message: "Play to start talking" };
-const wakingUpMessage = "Start the conversation by asking me a question!";
+const wakingUpMessage = "Let's start the conversation!";
 const initialConversationHistory = [
   { speaker: "Human", message: "Hello, who are you?" },
   { speaker: "AI", message: "I am Watson. How can I help you today?" },
@@ -162,7 +162,7 @@ export default function Home() {
   };
 
   const getGPT3Suggestions = async (message: string) => {
-    const prompt = `Suggest some answers in plain English to this message: "${message}".\nReturn a Javascript array with double quotes.\n\n
+    const prompt = `You are talking with a friend. Suggest some answers in plain English to this message: "${message}".\nReturn a Javascript array with double quotes.\n\n
     Example: ["Answer 1", "Answer 2", "Answer 3"]\n\nJavascript array:`;
 
     return await fetch("https://api.openai.com/v1/completions", {
@@ -221,9 +221,18 @@ export default function Home() {
           talking ? "play" : "pause"
         }`}
       />
-
+      <div className="absolute top-0 w-full p-4 flex justify-between items-stretch md:items-start gap-4 flex-col md:flex-row">
+        <Conversation
+          className="md:w-96 overflow-y-scroll"
+          history={conversationHistory.current}
+        />
+        <Suggestions
+          className="md:w-96  overflow-y-scroll"
+          suggestions={suggestions}
+        />
+      </div>
       <main
-        className={`flex flex-col items-center justify-center h-screen px-8 ${
+        className={`flex flex-col items-center justify-center h-screen px-8 mx-96 z-10 relative ${
           messages[messages.length - 1].speaker == "Human" ? "opacity-50" : ""
         }`}
       >
@@ -262,16 +271,6 @@ export default function Home() {
           onRestart={restart}
         />
       </main>
-      <div className="absolute top-0 w-full p-4 flex justify-between items-stretch md:items-start gap-4 flex-col md:flex-row">
-        <Conversation
-          className="md:w-96 overflow-y-scroll"
-          history={conversationHistory.current}
-        />
-        <Suggestions
-          className="md:w-96  overflow-y-scroll"
-          suggestions={suggestions}
-        />
-      </div>
     </div>
   );
 }
