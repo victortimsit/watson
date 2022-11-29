@@ -151,7 +151,7 @@ export default function Home() {
         Authorization: `Bearer ${process.env.NEXT_PUBLIC_OPEN_AI_TOKEN}`,
       },
       body: JSON.stringify({
-        model: "text-davinci-002",
+        model: "text-davinci-003",
         prompt,
         temperature: 1,
         max_tokens: 100,
